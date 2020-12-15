@@ -1,3 +1,8 @@
+#ifndef BIT_H
+#define BIT_H
+
+#include <iostream>
+
 class bit
 {
 private:
@@ -35,41 +40,7 @@ public:
   friend bool operator== (const bit &lhs, const bit &rhs);
   friend bool operator!= (const bit &lhs, const bit &rhs);
 
+  friend std::ostream& operator<< (std::ostream &out, const bit &b);
 };
 
-bit Not (bit& b)
-{
-  return bit (!b.get ());
-}
-
-int toInt (bit& b)
-{
-  return b.get () ? 1 : 0;
-}
-
-bool operator> (const bit &lhs, const bit &rhs)
-{
-  return lhs.m_bit && !rhs.m_bit;
-}
-bool operator<= (const bit &lhs, const bit &rhs)
-{
-  return (lhs < rhs) || (lhs == rhs);
-}
-
-bool operator< (const bit &lhs, const bit &rhs)
-{
-  return !lhs.m_bit && rhs.m_bit;
-}
-bool operator>= (const bit &lhs, const bit &rhs)
-{
-  return (lhs > rhs) || (lhs == rhs) ;
-}
-
-bool operator== (const bit &lhs, const bit &rhs)
-{
-  return (lhs.m_bit && rhs.m_bit) || (!lhs.m_bit && !rhs.m_bit);
-}
-bool operator!= (const bit &lhs, const bit &rhs)
-{
-  return (lhs.m_bit && !rhs.m_bit) || (!lhs.m_bit && rhs.m_bit);
-}
+#endif //BIT_H
