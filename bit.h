@@ -2,6 +2,7 @@
 #define BIT_H
 
 #include <iostream>
+#include <vector>
 
 class bit
 {
@@ -42,5 +43,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream &out, const bit &b);
 };
+
+using bit_array = std::vector<bit>;
 
 #endif //BIT_H

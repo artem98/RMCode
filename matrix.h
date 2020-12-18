@@ -8,15 +8,30 @@ template <typename T>
 class dence_matrix
 {
 public:
+  dence_matrix () {}
   dence_matrix (size_t nrows, size_t ncols)
+  {
+    init (nrows, ncols);
+  }
+  void init (size_t nrows, size_t ncols)
   {
     m_nrows = nrows;
     m_ncols = ncols;
     m_data.resize (m_nrows * m_ncols);
   }
 
-  T& at (size_t i, size_t j) { return m_data[i * m_ncols + j]; }
-  void fill (const T& value) { std::fill (m_data.begin(), m_data.end(), value); }
+  void set (size_t i, size_t j, const T& val)
+  {
+    m_data[i * m_ncols + j] = val;
+  }
+  T at (size_t i, size_t j)
+  {
+    return m_data[i * m_ncols + j];
+  }
+  void fill (const T& value)
+  {
+    std::fill (m_data.begin(), m_data.end(), value);
+  }
 
   void print ()
   {
