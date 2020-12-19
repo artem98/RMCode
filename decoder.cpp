@@ -1,4 +1,63 @@
+#include <memory>
 #include "decoder.h"
+
+bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
+                           const size_t vars_len,
+                           const size_t free_vars_num, // count of variables in monome (for which 1 is set in mask)
+                           const bit* table,
+                           const size_t table_len)
+{
+  size_t other_vals_count = vars_len - free_vars_num;
+  size_t block_count = 1 << other_vals_count;
+  std::unique_ptr<bit[]> blocks_values (new bit[block_count]);
+  std::unique_ptr<bit[]> vars_values_workspace (new bit[vars_len]);
+
+  for (size_t block = 0; block < block_count; block++)
+    {
+      // set other vars values in vars_values_workspace
+      for (size_t var_index = 0; var_index < vars_len; var_index++)
+        {
+          if (vars_mask[var_index].get ())
+            continue;
+
+          vars_values_workspace[var_index].set ((block >> var_index) & 1);
+        }
+      blocks_values[block] = block_sum_result (vars_mask, vars_len, free_vars_num,
+                                               vars_values_workspace.get (), table, table_len);
+    }
+
+  printf ("%d, %d, len %d\n", blocks_values[0].getInt(), blocks_values[1].getInt(), (int)block_count);
+
+  return vote (blocks_values.get (), block_count);
+}
+
+bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
+                      const size_t vars_len,
+                      const size_t free_vars_num, // count of variables in monome (for which 1 is set in mask)
+                      bit* other_vars_values, // values of other variables (for which 0 is set in mask)
+                      const bit* table,
+                      const size_t table_len)
+{
+  size_t block_height = 1 << free_vars_num;
+  bit sum (0);
+
+  for (size_t free_vars_values = 0; free_vars_values < block_height; free_vars_values++)
+    {
+      // put free vars values in other_vars_values
+      size_t free_var_iter = 0;
+      for (size_t var_index = 0; var_index < vars_len; var_index++)
+        {
+          if (!vars_mask[var_index].get ())
+            continue;
+
+          other_vars_values[var_index].set ((free_vars_values >> free_var_iter) & 1);
+          free_var_iter++;
+        }
+      sum = sum + get_table_value_for_variables (table, table_len, other_vars_values, vars_len);
+    }
+
+  return sum;
+}
 
 // f' = f - a * x_i1 * ... * x_is
 // a is supposed to be 1

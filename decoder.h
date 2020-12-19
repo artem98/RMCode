@@ -3,6 +3,20 @@
 
 #include "bit.h"
 
+bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
+                           const size_t vars_len,
+                           const size_t free_vars_num, // count of variables in monome (for which 1 is set in mask)
+                           const bit* table,
+                           const size_t table_len);
+
+bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
+                      const size_t vars_len,
+                      const size_t free_vars_num, // count of variables in monome (for which 1 is set in mask)
+                      bit* other_vars_values, // values of other variables (for which 0 is set in mask)
+                      const bit* table,
+                      const size_t table_len);
+
+
 // f' = f - a * x_i1 * ... * x_is
 // a is supposed to be 1
 void change_func_table (const bit* vars,
