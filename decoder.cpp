@@ -1,6 +1,68 @@
 #include <memory>
 #include "decoder.h"
 
+size_t module (size_t n, size_t bound)
+{
+  size_t res = 0;
+  for (size_t i = 0; i < bound; i++)
+    {
+      if ((n >> i) & 1)
+        res++;
+    }
+  return res;
+}
+
+void clear_mask (bit* mask, size_t size)
+{
+  for (size_t i = 0; i < size; i++)
+    mask[i].set (0);
+}
+
+void set_mask_from_line (bit* mask, size_t line, size_t m)
+{
+  for (size_t i = 0; i < m; i++)
+    {
+      mask[i].set ((line >> i) & 1);
+    }
+}
+
+void calculate_all_coefs (bit* table, // will be modified during calculations
+                         const size_t table_len,
+                         const size_t m, // vars count
+                         const size_t k, // coefs count
+                         const size_t r, // polynome deg
+                         //Result
+                         bit* coefs)
+{
+  size_t curr_max_deg = r;
+  std::unique_ptr<bit[]> vars_mask (new bit[m]);
+
+  for (;; curr_max_deg--)
+    {
+      // Dumb way: go through all coefs and choose only those whose deg = curr_max_deg
+      for (size_t coef_line = 0; coef_line < k; coef_line++)
+        {
+          if (module (coef_line, m) < curr_max_deg)
+            continue;
+
+          set_mask_from_line (vars_mask.get (), coef_line, m);
+          bit coef = calculate_coefficient (vars_mask.get (), m, curr_max_deg,
+                                            table, table_len);
+
+          if (coef.get ())
+            {
+              coefs[coef_line] = coef;
+              change_func_table (vars_mask.get (), m, table, table_len);
+            }
+
+          clear_mask (vars_mask.get (), m);
+        }
+
+      if (curr_max_deg == 0)
+        break;
+    }
+}
+
 bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
                            const size_t vars_len,
                            const size_t free_vars_num, // count of variables in monome (for which 1 is set in mask)
@@ -25,8 +87,6 @@ bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded mon
       blocks_values[block] = block_sum_result (vars_mask, vars_len, free_vars_num,
                                                vars_values_workspace.get (), table, table_len);
     }
-
-  printf ("%d, %d, len %d\n", blocks_values[0].getInt(), blocks_values[1].getInt(), (int)block_count);
 
   return vote (blocks_values.get (), block_count);
 }
