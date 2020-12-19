@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include "bit.h"
 #include "encoder.h"
+#include "decoder.h"
 
 int main (int argc, char *argv[])
 {
@@ -34,6 +35,17 @@ int main (int argc, char *argv[])
   bit_array code = encoder.encode(word);
   std::cout << "Code:" << std::endl;
   print_bits (code);
+
+  bit_array decoded_word;
+  decoded_word.assign (k, bit (0));
+  calculate_all_coefs (code.data (), code.size (), m, k, r, decoded_word.data ());
+  std::cout << "Decoded word:" << std::endl;
+  print_bits (decoded_word);
+
+  bit_array diff;
+  for (size_t i = 0; i < k; i++)
+    diff.push_back (decoded_word[i] + word[i]);
+  std::cout << "Diff: " << module (diff) << std::endl;
 
   return 0;
 }
