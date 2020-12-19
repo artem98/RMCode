@@ -24,7 +24,7 @@ int main (int argc, char *argv[])
     }
 
   RM_encoder encoder (r, m);
-  //encoder.print_generator_matrix();
+  encoder.print_generator_matrix();
 
   size_t k = encoder.get_k();
   bit_array word = get_rand_bits (k);

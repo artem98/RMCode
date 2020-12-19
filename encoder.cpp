@@ -3,27 +3,41 @@
 
 void RM_encoder::fill_generator_matrix ()
 {
-  dence_matrix<bit> &M = m_generator_mtx;
-  M.set (0, 0, bit (1));
-  M.set (0, 1, bit (1));
-  M.set (1, 0, bit (0));
-  M.set (1, 1, bit (1));
-  for (size_t sz = 2; sz < m_n; sz *= 2)
+  dence_matrix<bit> full_matrix (m_n, m_n);
+  full_matrix.set (0, 0, bit (1));
+  for (size_t sz = 1; sz < m_n; sz *= 2)
     {
-      for (size_t row = 0; row < std::min (sz, m_k); row++)
+      for (size_t row = 0; row < std::min (sz, m_n); row++)
         {
-          for (size_t col = sz; col < sz * 2; col++)
+          for (size_t col = sz; col < std::min (sz * 2, m_n); col++)
             {
-              M.set (row, col, M.at (row, col - sz));
+              full_matrix.set (row, col, full_matrix.at (row, col - sz));
             }
         }
-      for (size_t row = sz; row < std::min (sz * 2, m_k); row++)
+      for (size_t row = sz; row < std::min (sz * 2, m_n); row++)
         {
-          for (size_t col = sz; col < sz * 2; col++)
+          for (size_t col = sz; col < std::min (sz * 2, m_n); col++)
             {
-              M.set (row, col, M.at (row - sz, col - sz));
+              full_matrix.set (row, col, full_matrix.at (row - sz, col - sz));
             }
         }
+    }
+  //full_matrix.print();
+
+  dence_matrix<bit> &M = m_generator_mtx;
+  size_t trunc_row = 0;
+  for (unsigned int row = 0; row < m_n; row++)
+    {
+      if (trunc_row > m_k)
+        {
+          printf ("ERROR!\n");
+          break;
+        }
+      if (module (get_bits(row)) > m_r)
+        continue;
+      for (size_t col = 0; col < m_n; col++)
+        M.set (trunc_row, col, full_matrix.at (row, col));
+      trunc_row++;
     }
 }
 
@@ -35,7 +49,7 @@ bit_array RM_encoder::encode (const bit_array &word)
   res.assign (m_n, bit (0));
   for (size_t col = 0; col < m_n; col++)
     {
-      for (size_t row = 0; row <= std::min (col, m_k); row++)
+      for (size_t row = 0; row < std::min (col + 1, m_k); row++)
         res[col] = res[col] + word[row] * m_generator_mtx.at (row, col);
     }
   return res;
@@ -63,4 +77,24 @@ void print_bits (bit_array bits)
   for (const bit &b : bits)
     std::cout << b;
   std::cout << std::endl;
+}
+
+bit_array get_bits (unsigned int x)
+{
+  bit_array bits;
+  unsigned int i, bit, len = 8;//sizeof(unsigned int)*8;
+  for (i=0;i<len;i++)
+    {
+      bit = x>>(len-i-1)&1;
+      bits.push_back (bit == 1);
+    }
+  return bits;
+}
+
+size_t module (bit_array bits)
+{
+  size_t cnt = 0;
+  for (bit &b : bits)
+    cnt += b.getInt();
+  return cnt;
 }

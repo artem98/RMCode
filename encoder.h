@@ -33,6 +33,7 @@ class RM_encoder
 public:
   RM_encoder (int r, int m)
   {
+    m_r = r;
     m_n = pow (2, m);
     printf ("n = %lu\n", m_n);
     m_k = code_dim (r, m);
@@ -40,7 +41,11 @@ public:
     m_generator_mtx.init (m_k, m_n);
     fill_generator_matrix ();
   }
-  void print_generator_matrix () { m_generator_mtx.print(); }
+  void print_generator_matrix ()
+  {
+    std::cout << "Generator:" << std::endl;
+    m_generator_mtx.print();
+  }
   bit_array encode (const bit_array &word);
 
   size_t get_k () { return m_k; }
@@ -52,10 +57,13 @@ private:
   dence_matrix<bit> m_generator_mtx;
   size_t m_k = 0;
   size_t m_n = 0;
+  size_t m_r = 0;
 };
 
 bit get_rand_bit ();
 bit_array get_rand_bits (size_t k);
 void print_bits (bit_array bits);
+bit_array get_bits (unsigned int x);
+size_t module (bit_array bits);
 
 #endif//ENCODER_H
