@@ -64,23 +64,23 @@ bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 
 // x_i1 ... x_is is stored as:
 // 0, 0, 1, 0, 1, ... 1, 0
 // ......i1....i2.....is..
-void change_func_table (const bit* vars,
+void change_func_table (const bit* vars_mask,
                         const size_t vars_len,
                         bit* table,
                         const size_t table_len)
 {
-  auto is_any_chosen_variable_true = [&] (size_t line) ->bool {
+  auto are_all_chosen_variable_true = [&] (size_t line) ->bool {
     for (size_t ind = 0; ind < vars_len; ind++)
       {
-        if (vars[ind].get () && ((line >> ind) & 1))
-          return 1;
+        if (!(!vars_mask[ind].get () || ((line >> ind) & 1))) // if var is chosen it must be 1
+          return false;
       }
-    return false;
+    return true;
   };
 
   for (size_t line = 0; line < table_len; line++)
     {
-      if (is_any_chosen_variable_true (line))
+      if (are_all_chosen_variable_true (line))
         table[line].inverse ();
     }
 }
