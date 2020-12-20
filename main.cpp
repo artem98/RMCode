@@ -49,10 +49,21 @@ int main (int argc, char *argv[])
   std::cout << "Decoded word:" << std::endl;
   print_bits (decoded_word);
 
+  bit_array decoded_noise_word;
+  decoded_noise_word.assign (k, bit (0));
+  calculate_all_coefs (noise_code.data (), noise_code.size (), m, k, r, decoded_noise_word.data ());
+  std::cout << "Decoded noise word:" << std::endl;
+  print_bits (decoded_noise_word);
+
   bit_array diff;
   for (size_t i = 0; i < k; i++)
     diff.push_back (decoded_word[i] + word[i]);
   std::cout << "Diff: " << module (diff) << std::endl;
+
+  bit_array diff_noise;
+  for (size_t i = 0; i < k; i++)
+    diff.push_back (decoded_noise_word[i] + word[i]);
+  std::cout << "Diff noise: " << module (diff_noise) << std::endl;
 
   return 0;
 }
