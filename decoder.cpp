@@ -46,13 +46,12 @@ void calculate_all_coefs (bit* table, // will be modified during calculations
           set_mask_from_line (vars_mask.get (), coef_line, m);
           bit coef = calculate_coefficient (vars_mask.get (), m, curr_max_deg,
                                             table, table_len);
-
-              coefs[coef_iter] = coef;
-              if (coef.get ())
-                change_func_table (vars_mask.get (), m, table, table_len);
-
-              coef_iter--;
+          coefs[coef_iter] = coef;
+          if (coef.get ())
+            change_func_table (vars_mask.get (), m, table, table_len);
+          coef_iter--;
           clear_mask (vars_mask.get (), m);
+
           if (coef_line == 0)
             break;
         }
@@ -72,6 +71,8 @@ bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded mon
   size_t block_count = 1 << other_vals_count;
   std::unique_ptr<bit[]> blocks_values (new bit[block_count]);
   std::unique_ptr<bit[]> vars_values_workspace (new bit[vars_len]);
+  size_t count_0 = 0;
+  size_t count_1 = 0;
 
   for (size_t block = 0; block < block_count; block++)
     {
@@ -84,11 +85,16 @@ bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded mon
 
           vars_values_workspace[var_index].set ((block >> var_index) & 1);
         }
-      blocks_values[block] = block_sum_result (vars_mask, vars_len, free_vars_num,
-                                               vars_values_workspace.get (), table, table_len);
+      if (block_sum_result (vars_mask, vars_len, free_vars_num,
+                            vars_values_workspace.get (), table, table_len).get ())
+        count_1++;
+      else
+        count_0++;
+//      blocks_values[block] = block_sum_result (vars_mask, vars_len, free_vars_num,
+//                                               vars_values_workspace.get (), table, table_len);
     }
 
-  return vote (blocks_values.get (), block_count);
+  return bit (count_1 > count_0);//vote (blocks_values.get (), block_count);
 }
 
 bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
