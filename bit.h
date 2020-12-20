@@ -1,6 +1,8 @@
 #ifndef BIT_H
 #define BIT_H
 
+#define DO_PRINT (true)
+
 #include <iostream>
 #include <vector>
 

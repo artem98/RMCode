@@ -50,6 +50,8 @@ public:
   }
   void print_generator_matrix ()
   {
+    if (!DO_PRINT)
+      return ;
     std::cout << "Generator:" << std::endl;
     m_generator_mtx.print();
   }

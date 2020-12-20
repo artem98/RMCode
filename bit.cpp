@@ -64,6 +64,9 @@ bit_array get_rand_bits (size_t k)
 
 void print_bits (bit_array bits)
 {
+  if (!DO_PRINT)
+    return ;
+
   for (const bit &b : bits)
     std::cout << b;
   std::cout << std::endl;
