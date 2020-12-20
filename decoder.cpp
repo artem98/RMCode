@@ -1,17 +1,6 @@
 #include <memory>
 #include "decoder.h"
 
-size_t module (size_t n, size_t bound)
-{
-  size_t res = 0;
-  for (size_t i = 0; i < bound; i++)
-    {
-      if ((n >> i) & 1)
-        res++;
-    }
-  return res;
-}
-
 void clear_mask (bit* mask, size_t size)
 {
   for (size_t i = 0; i < size; i++)

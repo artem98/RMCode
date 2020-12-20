@@ -46,4 +46,14 @@ public:
 
 using bit_array = std::vector<bit>;
 
+bit get_rand_bit ();
+bit_array get_rand_bits (size_t k);
+void print_bits (bit_array bits);
+bit_array get_bits (unsigned int x);
+size_t module (bit_array bits);
+size_t module (size_t n, size_t bound);
+
+int get_rand_int (int min, int max);
+bit_array & set_noise (bit_array &word, int noise_num);
+
 #endif //BIT_H

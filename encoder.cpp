@@ -1,5 +1,4 @@
 #include "encoder.h"
-#include <random>
 
 void RM_encoder::fill_generator_matrix ()
 {
@@ -33,7 +32,7 @@ void RM_encoder::fill_generator_matrix ()
           printf ("\ntrunc_row: %lu, k: %lu, row: %u\n", trunc_row, m_k, row);
           STOP ("trunc_row is out of bounds");
         }
-      if (module (get_bits(row)) > m_r)
+      if (module (row, sizeof (unsigned int) * 8) > m_r)
         continue;
       for (size_t col = 0; col < m_n; col++)
         M.set (trunc_row, col, full_matrix.at (row, col));
@@ -53,71 +52,4 @@ bit_array RM_encoder::encode (const bit_array &word)
         res[col] = res[col] + word[row] * m_generator_mtx.at (row, col);
     }
   return res;
-}
-
-
-bit get_rand_bit ()
-{
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> distrib(0, 1);
-  return bit (distrib(gen));
-}
-
-bit_array get_rand_bits (size_t k)
-{
-  bit_array word;
-  for (size_t i = 0; i < k; i++)
-    word.push_back (get_rand_bit ());
-  return word;
-}
-
-void print_bits (bit_array bits)
-{
-  for (const bit &b : bits)
-    std::cout << b;
-  std::cout << std::endl;
-}
-
-bit_array get_bits (unsigned int x)
-{
-  bit_array bits;
-  unsigned int i, bit, len = sizeof(unsigned int)*8;
-  for (i=0;i<len;i++)
-    {
-      bit = x>>(len-i-1)&1;
-      bits.push_back (bit == 1);
-    }
-  return bits;
-}
-
-size_t module (bit_array bits)
-{
-  size_t cnt = 0;
-  for (bit &b : bits)
-    cnt += b.getInt();
-  return cnt;
-}
-
-int get_rand_int (int min, int max)
-{
-  int rand_int = std::rand();
-  return min + (rand_int % max);
-}
-
-bit_array & set_noise (bit_array &word, int noise_num)
-{
-  std::srand(time(nullptr));
-  if (int(word.size()) < noise_num)
-  {
-    printf("Warning! word size = %d less than noise size = %d", int(word.size()), noise_num);
-    noise_num = int(word.size());
-  }
-
-  for (int noise_i = 0; noise_i < noise_num; noise_i ++)
-    {
-      int random_position = get_rand_int(0, int(word.size()));
-      word[random_position].inverse();
-    }
-  return word;
 }

@@ -41,7 +41,7 @@ public:
   RM_encoder (int r, int m)
   {
     m_r = r;
-    m_n = pow (2, m);
+    m_n = 1 << m;
     printf ("n = %lu\n", m_n);
     m_k = code_dim (r, m);
     printf ("k = %lu\n", m_k);
@@ -66,14 +66,5 @@ private:
   size_t m_n = 0;
   size_t m_r = 0;
 };
-
-bit get_rand_bit ();
-bit_array get_rand_bits (size_t k);
-void print_bits (bit_array bits);
-bit_array get_bits (unsigned int x);
-size_t module (bit_array bits);
-
-int get_rand_int (int min, int max);
-bit_array & set_noise (bit_array &word, int noise_num);
 
 #endif//ENCODER_H
