@@ -92,9 +92,9 @@ size_t module (bit_array bits)
 size_t module (size_t n, size_t bound)
 {
   size_t res = 0;
-  for (size_t i = 0; i < bound; i++)
+  for (size_t i = 0; i < bound; i++, n >>= 1)
     {
-      if ((n >> i) & 1)
+      if (n & 1)
         res++;
     }
   return res;

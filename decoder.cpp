@@ -147,9 +147,9 @@ void change_func_table (const bit* vars_mask,
                         const size_t table_len)
 {
   auto are_all_chosen_variable_true = [&] (size_t line) ->bool {
-    for (size_t ind = 0; ind < vars_len; ind++)
+    for (size_t ind = 0; ind < vars_len; ind++, line >>= 1)
       {
-        if (!(!vars_mask[ind].get () || ((line >> ind) & 1))) // if var is chosen it must be 1
+        if (vars_mask[ind].get () && !(line & 1)) // if var is chosen it must be 1
           return false;
       }
     return true;
