@@ -36,6 +36,13 @@ int main (int argc, char *argv[])
   std::cout << "Code:" << std::endl;
   print_bits (code);
 
+  int noise = max_noise(r, m);
+  std::cout << "Max noise:" << noise << std::endl;
+  bit_array noise_code = bit_array(code);
+  set_noise(noise_code, noise);
+  std::cout << "Noise code:" << std::endl;
+  print_bits (noise_code);
+
   bit_array decoded_word;
   decoded_word.assign (k, bit (0));
   calculate_all_coefs (code.data (), code.size (), m, k, r, decoded_word.data ());

@@ -28,6 +28,11 @@ inline size_t code_dim (int r, int m)
   return dim;
 }
 
+inline size_t max_noise (int r, int m)
+{
+  return (1 << (m - r - 1)) - 1;
+}
+
 class RM_encoder
 {
 public:
@@ -65,5 +70,8 @@ bit_array get_rand_bits (size_t k);
 void print_bits (bit_array bits);
 bit_array get_bits (unsigned int x);
 size_t module (bit_array bits);
+
+int get_rand_int (int min, int max);
+bit_array & set_noise (bit_array &word, int noise_num);
 
 #endif//ENCODER_H

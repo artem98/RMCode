@@ -98,3 +98,26 @@ size_t module (bit_array bits)
     cnt += b.getInt();
   return cnt;
 }
+
+int get_rand_int (int min, int max)
+{
+  int rand_int = std::rand();
+  return min + (rand_int % max);
+}
+
+bit_array & set_noise (bit_array &word, int noise_num)
+{
+  std::srand(time(nullptr));
+  if (int(word.size()) < noise_num)
+  {
+    printf("Warning! word size = %d less than noise size = %d", int(word.size()), noise_num);
+    noise_num = int(word.size());
+  }
+
+  for (int noise_i = 0; noise_i < noise_num; noise_i ++)
+    {
+      int random_position = get_rand_int(0, int(word.size()));
+      word[random_position].inverse();
+    }
+  return word;
+}
