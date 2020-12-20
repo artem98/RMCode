@@ -79,32 +79,30 @@ bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded mon
 {
   size_t other_vals_count = vars_len - free_vars_num;
   size_t block_count = 1 << other_vals_count;
-  std::unique_ptr<bit[]> blocks_values (new bit[block_count]);
   std::unique_ptr<bit[]> vars_values_workspace (new bit[vars_len]);
   size_t count_0 = 0;
   size_t count_1 = 0;
 
   for (size_t block = 0; block < block_count; block++)
     {
-
+      size_t other_var_iter = 0;
       // set other vars values in vars_values_workspace
       for (size_t var_index = 0; var_index < vars_len; var_index++)
         {
           if (vars_mask[var_index].get ())
             continue;
 
-          vars_values_workspace[var_index].set ((block >> var_index) & 1);
+          vars_values_workspace[var_index].set ((block >> other_var_iter) & 1);
+          other_var_iter++;
         }
       if (block_sum_result (vars_mask, vars_len, free_vars_num,
                             vars_values_workspace.get (), table, table_len).get ())
         count_1++;
       else
         count_0++;
-//      blocks_values[block] = block_sum_result (vars_mask, vars_len, free_vars_num,
-//                                               vars_values_workspace.get (), table, table_len);
     }
 
-  return bit (count_1 > count_0);//vote (blocks_values.get (), block_count);
+  return bit (count_1 > count_0);
 }
 
 bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 0 - otherwise
@@ -175,21 +173,4 @@ bit get_table_value_for_variables (const bit* table,
     }
 
   return table[index];
-}
-
-bit vote (const bit* values_for_vote, const size_t len)
-{
-  size_t zero_count = 0;
-  size_t one_count = 0;
-
-  for (size_t ind = 0; ind < len; ind++)
-    {
-      if (values_for_vote[ind].get ())
-        one_count++;
-      else
-        zero_count++;
-    }
-  if (one_count > zero_count)
-    return bit (true);
-  return bit (false);
 }
