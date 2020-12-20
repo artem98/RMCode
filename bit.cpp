@@ -123,3 +123,16 @@ bit_array & set_noise (bit_array &word, int noise_num)
   return word;
 }
 
+size_t diff (const bit_array &bits1, const bit_array &bits2)
+{
+  size_t size = std::min (bits1.size (), bits2.size ());
+  size_t diff = 0;
+  for (size_t i = 0; i < size; i++)
+    {
+      bit d = bits1[i] + bits2[i];
+      if (d.get())
+        diff++;
+    }
+  return diff;
+}
+

@@ -2,8 +2,6 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "matrix.h"
-#include "bit.h"
 #include "encoder.h"
 #include "decoder.h"
 
@@ -36,34 +34,32 @@ int main (int argc, char *argv[])
   std::cout << "Code:" << std::endl;
   print_bits (code);
 
-  int noise = max_noise(r, m);
+  size_t noise = max_noise(r, m);
   std::cout << "Max noise:" << noise << std::endl;
   bit_array noise_code = bit_array(code);
   set_noise(noise_code, noise);
   std::cout << "Noise code:" << std::endl;
   print_bits (noise_code);
 
-  bit_array decoded_word;
-  decoded_word.assign (k, bit (0));
-  calculate_all_coefs (code.data (), code.size (), m, k, r, decoded_word.data ());
+  RM_decoder decoder (r, m, k);
+
+  bit_array decoded_word = decoder.decode (code);
   std::cout << "Decoded word:" << std::endl;
   print_bits (decoded_word);
 
-  bit_array decoded_noise_word;
-  decoded_noise_word.assign (k, bit (0));
-  calculate_all_coefs (noise_code.data (), noise_code.size (), m, k, r, decoded_noise_word.data ());
+  bit_array decoded_noise_word = decoder.decode (noise_code);
   std::cout << "Decoded noise word:" << std::endl;
   print_bits (decoded_noise_word);
 
-  bit_array diff;
-  for (size_t i = 0; i < k; i++)
-    diff.push_back (decoded_word[i] + word[i]);
-  std::cout << "Diff: " << module (diff) << std::endl;
+  //bit_array diff;
+  //for (size_t i = 0; i < k; i++)
+  //  diff.push_back (decoded_word[i] + word[i]);
+  std::cout << "Diff: " << diff (decoded_word, word) << std::endl;
 
-  bit_array diff_noise;
-  for (size_t i = 0; i < k; i++)
-    diff.push_back (decoded_noise_word[i] + word[i]);
-  std::cout << "Diff noise: " << module (diff_noise) << std::endl;
+  //bit_array diff_noise;
+  //for (size_t i = 0; i < k; i++)
+  //  diff_noise.push_back (decoded_noise_word[i] + word[i]);
+  std::cout << "Diff noise: " << diff (decoded_noise_word, word) << std::endl;
 
   return 0;
 }

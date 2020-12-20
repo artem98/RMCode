@@ -1,6 +1,16 @@
 #include <memory>
 #include "decoder.h"
 
+bit_array RM_decoder::decode (bit_array &code)
+{
+  if (code.size () != m_n)
+    return {};
+  bit_array decoded_word;
+  decoded_word.assign (m_k, bit (0));
+  calculate_all_coefs (code.data (), m_n, m_m, m_k, m_r, decoded_word.data ());
+  return decoded_word;
+}
+
 void clear_mask (bit* mask, size_t size)
 {
   for (size_t i = 0; i < size; i++)

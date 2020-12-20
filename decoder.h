@@ -3,6 +3,25 @@
 
 #include "bit.h"
 
+class RM_decoder
+{
+public:
+  RM_decoder (size_t r, size_t m, size_t k)
+  {
+    m_k = k;
+    m_n = 1 << m;
+    m_r = r;
+    m_m = m;
+  }
+  bit_array decode (bit_array &code);  // 'code' will be modified during calculations
+
+private:
+  size_t m_k = 0;
+  size_t m_n = 0;
+  size_t m_r = 0;
+  size_t m_m = 0;
+};
+
 void calculate_all_coefs (bit* table, // will be modified during calculations
                          const size_t table_len,
                          const size_t m, // vars count

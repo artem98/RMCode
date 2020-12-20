@@ -55,5 +55,6 @@ size_t module (size_t n, size_t bound);
 
 int get_rand_int (int min, int max);
 bit_array & set_noise (bit_array &word, int noise_num);
+size_t diff (const bit_array &bits1, const bit_array &bits2);
 
 #endif //BIT_H
