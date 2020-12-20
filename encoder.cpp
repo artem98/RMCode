@@ -25,14 +25,14 @@ void RM_encoder::fill_generator_matrix ()
 
   dence_matrix<bit> &M = m_generator_mtx;
   size_t trunc_row = 0;
-  for (unsigned int row = 0; row < m_n; row++)
+  for (size_t row = 0; row < m_n; row++)
     {
       if (trunc_row > m_k)
         {
-          printf ("\ntrunc_row: %lu, k: %lu, row: %u\n", trunc_row, m_k, row);
+          printf ("\ntrunc_row: %lu, k: %lu, row: %lu\n", trunc_row, m_k, row);
           STOP ("trunc_row is out of bounds");
         }
-      if (module (row, sizeof (unsigned int) * 8) > m_r)
+      if (module (row, sizeof (size_t) * 8) > m_r)
         continue;
       for (size_t col = 0; col < m_n; col++)
         M.set (trunc_row, col, full_matrix.at (row, col));

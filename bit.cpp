@@ -72,18 +72,6 @@ void print_bits (bit_array bits)
   std::cout << std::endl;
 }
 
-bit_array get_bits (unsigned int x)
-{
-  bit_array bits;
-  unsigned int i, bit, len = sizeof(unsigned int)*8;
-  for (i=0;i<len;i++)
-    {
-      bit = x>>(len-i-1)&1;
-      bits.push_back (bit == 1);
-    }
-  return bits;
-}
-
 size_t module (bit_array bits)
 {
   size_t cnt = 0;
