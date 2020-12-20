@@ -67,8 +67,20 @@ void print_bits (bit_array bits)
   if (!DO_PRINT)
     return ;
 
-  for (const bit &b : bits)
-    std::cout << b;
+  size_t len = bits.size ();
+  if (len < MAX_LEN_FOR_PRINT)
+    {
+      for (const bit &b : bits)
+        std::cout << b;
+    }
+  else
+    {
+      for (size_t i = 0; i < 10; i++)
+        std::cout << bits[i];
+      std::cout << "...";
+      for (size_t i = len - 10; i < len; i++)
+        std::cout << bits[i];
+    }
   std::cout << std::endl;
 }
 

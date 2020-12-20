@@ -2,6 +2,7 @@
 #define BIT_H
 
 #define DO_PRINT (true)
+#define MAX_LEN_FOR_PRINT 25
 
 #include <iostream>
 #include <vector>

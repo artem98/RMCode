@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <ctime>
 
 #include "encoder.h"
 #include "decoder.h"
@@ -22,15 +23,20 @@ int main (int argc, char *argv[])
       return 1;
     }
 
+  double time = clock ();
   RM_encoder encoder (r, m);
-  //encoder.print_generator_matrix();
+  time = (clock() - time) / CLOCKS_PER_SEC;
+  std::cout << " Matrix creation time: " << time << std::endl;
 
   size_t k = encoder.get_k();
   bit_array word = get_rand_bits (k);
   std::cout << "Word to encode:" << std::endl;
   print_bits (word);
 
+  time = clock ();
   bit_array code = encoder.encode(word);
+  time = (clock() - time) / CLOCKS_PER_SEC;
+  std::cout << " Encoding time: " << time << std::endl;
   std::cout << "Code:" << std::endl;
   print_bits (code);
 
@@ -43,22 +49,22 @@ int main (int argc, char *argv[])
 
   RM_decoder decoder (r, m, k);
 
+  time = clock ();
   bit_array decoded_word = decoder.decode (code);
+  time = (clock() - time) / CLOCKS_PER_SEC;
+  std::cout << " Decoding time: " << time << std::endl;
   std::cout << "Decoded word:" << std::endl;
   print_bits (decoded_word);
 
+  time = clock ();
   bit_array decoded_noise_word = decoder.decode (noise_code);
+  time = (clock() - time) / CLOCKS_PER_SEC;
+  std::cout << " Decoding with noise time: " << time << std::endl;
   std::cout << "Decoded noise word:" << std::endl;
   print_bits (decoded_noise_word);
 
-  //bit_array diff;
-  //for (size_t i = 0; i < k; i++)
-  //  diff.push_back (decoded_word[i] + word[i]);
   std::cout << "Diff: " << diff (decoded_word, word) << std::endl;
 
-  //bit_array diff_noise;
-  //for (size_t i = 0; i < k; i++)
-  //  diff_noise.push_back (decoded_noise_word[i] + word[i]);
   std::cout << "Diff noise: " << diff (decoded_noise_word, word) << std::endl;
 
   return 0;
