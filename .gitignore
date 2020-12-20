@@ -2,3 +2,5 @@
 *.d
 *.out
 main
+*.pyc
+*checkpoint.ipynb
