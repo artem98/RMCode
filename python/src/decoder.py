@@ -79,6 +79,8 @@ class RM_decoder():
                             x_i += 1
                     fix_b_value += int(encode.get_rev_value(full_points))
                 fix_arg_values [fix_b_value % 2] += 1
+            if fix_arg_values[1] == fix_arg_values[0]:
+                print("ASSERT_PRINT! vote is bad: {}".format(fix_arg_values))
             if fix_arg_values[1] > fix_arg_values[0]:
                 result.append((monom_arg, 1))
                 for i in range(2**self.m):
