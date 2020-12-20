@@ -52,7 +52,8 @@ class RM_decoder():
         x_points = np.zeros(recur_r, dtype = np.bool)
 
         full_points = np.zeros(self.m, dtype = np.bool)
-
+        
+        fix_arg_values = np.zeros(2, dtype = np.int)
         for monom_arg in itertools.combinations(np.arange(self.m), recur_r):
             monom_arg_mask = np.zeros(self.m, dtype = np.bool)
             for arg in monom_arg:
@@ -61,7 +62,7 @@ class RM_decoder():
             fix_b = 0
             fix_x = 0
 
-            fix_arg_values = np.zeros(2, dtype = np.int)
+            fix_arg_values[0], fix_arg_values[1] = 0, 0
             for fix_b in range(2**(self.m - recur_r)):
                 b_points = point_from_position (b_points, fix_b)
                 fix_b_value = 0
@@ -76,8 +77,6 @@ class RM_decoder():
                         else:
                             full_points[mask_i] = x_points[x_i]
                             x_i += 1
-                    #print(full_points, x_points, b_points, monom_arg_mask)
-                    #print(encode.data, encode.get_rev_value(full_points), get_rev_position(full_points), full_points)
                     fix_b_value += int(encode.get_rev_value(full_points))
                 fix_arg_values [fix_b_value % 2] += 1
             if fix_arg_values[1] > fix_arg_values[0]:
@@ -93,5 +92,3 @@ class RM_decoder():
                         encode.data[i] = not encode.data[i]
             else:
                 result.append((monom_arg, 0))
-            #print(fix_arg_values, result)
-            #print(encode.data, fix_arg_values)
