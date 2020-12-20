@@ -30,8 +30,8 @@ void RM_encoder::fill_generator_matrix ()
     {
       if (trunc_row > m_k)
         {
-          printf ("ERROR! Trunc row: %lu, Row: %u\n", trunc_row, row);
-          break;
+          printf ("\ntrunc_row: %lu, k: %lu, row: %u\n", trunc_row, m_k, row);
+          STOP ("trunc_row is out of bounds");
         }
       if (module (get_bits(row)) > m_r)
         continue;

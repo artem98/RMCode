@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cmath>
 
+#define STOP(reason) do { fprintf (stderr, "INTERNAL ERROR : %s\n", reason); abort(); } while (0)
+
 inline size_t bcr (int n, int k) // binomial coefficient C_n^k
 {
   if (k > n / 2)
