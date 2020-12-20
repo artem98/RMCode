@@ -30,7 +30,7 @@ void RM_encoder::fill_generator_matrix ()
     {
       if (trunc_row > m_k)
         {
-          printf ("ERROR!\n");
+          printf ("ERROR! Trunc row: %lu, Row: %u\n", trunc_row, row);
           break;
         }
       if (module (get_bits(row)) > m_r)
@@ -82,7 +82,7 @@ void print_bits (bit_array bits)
 bit_array get_bits (unsigned int x)
 {
   bit_array bits;
-  unsigned int i, bit, len = 8;//sizeof(unsigned int)*8;
+  unsigned int i, bit, len = sizeof(unsigned int)*8;
   for (i=0;i<len;i++)
     {
       bit = x>>(len-i-1)&1;
