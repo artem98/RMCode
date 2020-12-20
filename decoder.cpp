@@ -36,26 +36,36 @@ void calculate_all_coefs (bit* table, // will be modified during calculations
 {
   size_t curr_max_deg = r;
   std::unique_ptr<bit[]> vars_mask (new bit[m]);
+  size_t whole_matrix_size = 1 << m;
+  size_t coef_iter = k - 1;
 
   for (;; curr_max_deg--)
     {
+      coef_iter = k - 1;
       // Dumb way: go through all coefs and choose only those whose deg = curr_max_deg
-      for (size_t coef_line = 0; coef_line < k; coef_line++)
+      for (size_t coef_line = whole_matrix_size - 1; ; coef_line--)
         {
-          if (module (coef_line, m) < curr_max_deg)
-            continue;
+          if (module (coef_line, m) != curr_max_deg)
+            {
+              if (coef_line == 0)
+                break;
+              if (module (coef_line, m) <= r)
+                coef_iter--;
+              continue;
+            }
 
           set_mask_from_line (vars_mask.get (), coef_line, m);
           bit coef = calculate_coefficient (vars_mask.get (), m, curr_max_deg,
                                             table, table_len);
 
-          if (coef.get ())
-            {
-              coefs[coef_line] = coef;
-              change_func_table (vars_mask.get (), m, table, table_len);
-            }
+              coefs[coef_iter] = coef;
+              if (coef.get ())
+                change_func_table (vars_mask.get (), m, table, table_len);
 
+              coef_iter--;
           clear_mask (vars_mask.get (), m);
+          if (coef_line == 0)
+            break;
         }
 
       if (curr_max_deg == 0)
@@ -76,6 +86,7 @@ bit calculate_coefficient (const bit* vars_mask, //1 - if x_i is in excluded mon
 
   for (size_t block = 0; block < block_count; block++)
     {
+
       // set other vars values in vars_values_workspace
       for (size_t var_index = 0; var_index < vars_len; var_index++)
         {
@@ -113,6 +124,7 @@ bit block_sum_result (const bit* vars_mask, //1 - if x_i is in excluded monome, 
           other_vars_values[var_index].set ((free_vars_values >> free_var_iter) & 1);
           free_var_iter++;
         }
+
       sum = sum + get_table_value_for_variables (table, table_len, other_vars_values, vars_len);
     }
 
